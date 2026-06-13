@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Utah Lawn Care Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  :root {
+    --soil:       #3B2A1A;
+    --grass:      #2D6A2F;
+    --grass-mid:  #4A8C3F;
+    --grass-pale: #D4EDDA;
+    --straw:      #C8A951;
+    --straw-pale: #FDF6E3;
+    --sky:        #5B9BD5;
+    --sky-pale:   #EBF4FB;
+    --mountain:   #7B8FA1;
+    --bark:       #8B5E3C;
+    --white:      #FAFAF8;
+    --ink:        #1C1C1C;
+    --muted:      #6B7280;
+    --rule:       #E5E7EB;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--ink);
+    line-height: 1.6;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(160deg, var(--soil) 0%, var(--grass) 55%, var(--grass-mid) 100%);
+    padding: 56px 24px 48px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 60px;
+    background: var(--white);
+    clip-path: ellipse(55% 100% at 50% 100%);
+  }
+  .hero-eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--straw);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(32px, 6vw, 56px);
+    color: #fff;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: #B8E0B8;
+  }
+  .hero-sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 15px;
+    max-width: 480px;
+    margin: 0 auto 28px;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.85);
+  }
+
+  /* ── NAV TABS ── */
+  .nav-wrap {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--white);
+    border-bottom: 2px solid var(--rule);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-wrap::-webkit-scrollbar { display: none; }
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    min-width: max-content;
+    padding: 0 16px;
+  }
+  .nav-tab {
+    padding: 14px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    user-select: none;
+  }
+  .nav-tab:hover { color: var(--grass); }
+  .nav-tab.active {
+    color: var(--grass);
+    border-bottom-color: var(--grass);
+    font-weight: 600;
+  }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 32px 20px 48px; max-width: 720px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 28px;
+    color: var(--grass);
+    margin-bottom: 6px;
+  }
+  .section-intro {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 16px;
+    border-left: 4px solid var(--grass);
+  }
+  .card.amber  { border-left-color: var(--straw); }
+  .card.sky    { border-left-color: var(--sky); }
+  .card.soil   { border-left-color: var(--soil); }
+  .card.bark   { border-left-color: var(--bark); }
+
+  .card-title {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card p { font-size: 14px; color: #374151; line-height: 1.65; }
+  .card ul { margin: 8px 0 0 16px; }
+  .card ul li { font-size: 14px; color: #374151; margin-bottom: 4px; line-height: 1.55; }
+
+  /* ── MONTH CALENDAR ── */
+  .month-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 8px;
+  }
+  @media(min-width:520px) { .month-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  .month-card {
+    border-radius: 8px;
+    padding: 14px;
+    border: 1px solid var(--rule);
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .month-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+  .month-card.spring { background: #F0FFF4; border-color: #86EFAC; }
+  .month-card.summer { background: #FFFBEB; border-color: #FCD34D; }
+  .month-card.fall   { background: #FFF7ED; border-color: #FDBA74; }
+  .month-card.winter { background: #F1F5F9; border-color: #CBD5E1; }
+
+  .month-name {
+    font-weight: 700;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .month-tasks { font-size: 12px; color: #374151; line-height: 1.5; }
+  .month-tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 100px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .spring .month-tag { background: #DCFCE7; color: #166534; }
+  .summer .month-tag { background: #FEF9C3; color: #854D0E; }
+  .fall   .month-tag { background: #FFEDD5; color: #9A3412; }
+  .winter .month-tag { background: #E2E8F0; color: #475569; }
+
+  /* ── IFA STEPS ── */
+  .steps-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 4px;
+  }
+  @media(min-width:520px) { .steps-row { grid-template-columns: repeat(4, 1fr); } }
+
+  .step-card {
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--rule);
+  }
+  .step-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 36px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .step-card:nth-child(1) { background: #EFF6FF; }
+  .step-card:nth-child(1) .step-num { color: #1D4ED8; }
+  .step-card:nth-child(2) { background: #F0FFF4; }
+  .step-card:nth-child(2) .step-num { color: var(--grass); }
+  .step-card:nth-child(3) { background: #FFFBEB; }
+  .step-card:nth-child(3) .step-num { color: #B45309; }
+  .step-card:nth-child(4) { background: #FFF1F2; }
+  .step-card:nth-child(4) .step-num { color: #BE123C; }
+
+  .step-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .step-desc  { font-size: 11px; color: var(--muted); line-height: 1.4; }
+
+  /* ── WATERING TABLE ── */
+  .water-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  .water-table th {
+    background: var(--grass);
+    color: #fff;
+    padding: 10px 12px;
+    text-align: left;
+    font-weight: 600;
+  }
+  .water-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  .water-table tr:nth-child(even) td { background: var(--grass-pale); }
+  .zone-badge {
+    display: inline-block;
+    background: var(--grass);
+    color: #fff;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  /* ── PROBLEM SOLVER ── */
+  .problem-item {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .problem-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    cursor: pointer;
+    background: var(--white);
+    font-weight: 600;
+    font-size: 14px;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .problem-header:hover { background: var(--grass-pale); }
+  .problem-header .chevron { transition: transform 0.2s; font-size: 12px; color: var(--muted); }
+  .problem-header.open .chevron { transform: rotate(180deg); }
+  .problem-body {
+    display: none;
+    padding: 16px;
+    background: #FAFAFA;
+    border-top: 1px solid var(--rule);
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.65;
+  }
+  .problem-body.open { display: block; }
+  .symptom-tag {
+    display: inline-block;
+    background: #FEF3C7;
+    color: #92400E;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 100px;
+    margin-bottom: 10px;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 14px;
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-box {
+    width: 18px; height: 18px;
+    min-width: 18px;
+    border: 2px solid var(--grass);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+    margin-top: 2px;
+  }
+  .check-box.checked {
+    background: var(--grass);
+    color: #fff;
+    font-size: 11px;
+  }
+  .check-text { flex: 1; line-height: 1.5; }
+  .check-text.checked-text { text-decoration: line-through; color: var(--muted); }
+
+  /* ── TIPS STRIP ── */
+  .tip-strip {
+    background: linear-gradient(135deg, var(--grass) 0%, var(--grass-mid) 100%);
+    border-radius: 10px;
+    padding: 18px 20px;
+    color: #fff;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .tip-icon { font-size: 22px; line-height: 1; }
+  .tip-content { font-size: 14px; line-height: 1.6; }
+  .tip-content strong { display: block; margin-bottom: 2px; font-size: 15px; }
+
+  /* ── STAT PILLS ── */
+  .stat-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px; }
+  .stat-pill {
+    background: var(--grass-pale);
+    border: 1px solid #86EFAC;
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    flex: 1;
+    min-width: 90px;
+  }
+  .stat-value { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--grass); }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+  h3 { font-size: 16px; font-weight: 600; margin: 24px 0 10px; color: var(--ink); }
+  h3:first-of-type { margin-top: 0; }
+
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .tag-red   { background: #FEE2E2; color: #991B1B; }
+  .tag-green { background: #DCFCE7; color: #166534; }
+  .tag-amber { background: #FEF9C3; color: #854D0E; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Utah Wasatch Front · Lawn Care</div>
+  <h1>Everything you need<br>for a <em>healthy lawn</em></h1>
+  <p class="hero-sub">Tailored to Utah's clay soil, alkaline water, and high-desert summers. IFA 4-Step program included.</p>
+  <div class="hero-badge">🏔️ Wasatch Front Conditions</div>
+</div>
+
+<!-- NAV -->
+<div class="nav-wrap">
+  <div class="nav-tabs">
+    <div class="nav-tab active" onclick="showTab('calendar')">📅 Calendar</div>
+    <div class="nav-tab" onclick="showTab('watering')">💧 Watering</div>
+    <div class="nav-tab" onclick="showTab('fertilizing')">🌱 Fertilizing</div>
+    <div class="nav-tab" onclick="showTab('mowing')">✂️ Mowing</div>
+    <div class="nav-tab" onclick="showTab('aeration')">🌍 Aeration</div>
+    <div class="nav-tab" onclick="showTab('problems')">🔍 Problems</div>
+    <div class="nav-tab" onclick="showTab('checklist')">✅ Checklist</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ CALENDAR -->
+<div id="tab-calendar" class="section active">
+  <div class="section-title">Year-Round Calendar</div>
+  <p class="section-intro">What to do each month in Utah. Timing is based on Wasatch Front elevation (4,300–4,800 ft).</p>
+
+  <div class="month-grid">
+    <div class="month-card winter">
+      <div class="month-tag">Winter</div>
+      <div class="month-name">January – February</div>
+      <div class="month-tasks">❄️ Lawn is dormant. No action needed.<br>🛠️ Service your mower and spreader.<br>📋 Plan spring tasks and order seed.</div>
+    </div>
+    <div class="month-card spring">
+      <div class="month-tag">Spring</div>
+      <div class="month-name">March</div>
+      <div class="month-tasks">🌡️ Wait for soil to reach 50°F.<br>🧹 Rake out dead thatch.<br>💧 Turn sprinklers on — check all heads.<br>🌱 IFA Step 1 (pre-emergent + fertilizer).</div>
+    </div>
+    <div class="month-card spring">
+      <div class="month-tag">Spring</div>
+      <div class="month-name">April – May</div>
+      <div class="month-tasks">✂️ Begin mowing at 3–3.5 inches.<br>🌿 Apply IFA Step 2.<br>🔍 Watch for weeds — treat early.<br>💧 Water 2–3x per week as temps rise.</div>
+    </div>
+    <div class="month-card summer">
+      <div class="month-tag">Summer</div>
+      <div class="month-name">June</div>
+      <div class="month-tasks">💧 Switch to Mon/Wed/Fri watering at 4 AM.<br>✂️ Raise mower to 3.5–4 inches.<br>🌿 IFA Step 3 (summer fertilizer).<br>🔍 Inspect for dry spots and coverage gaps.</div>
+    </div>
+    <div class="month-card summer">
+      <div class="month-tag">Summer</div>
+      <div class="month-name">July – August</div>
+      <div class="month-tasks">🌡️ Peak heat — never skip watering days.<br>✂️ Mow high (4 inches) — shade roots.<br>🌿 Treat bindweed and broadleaf weeds.<br>⚠️ Stop herbicide 4 weeks before seeding.</div>
+    </div>
+    <div class="month-card fall">
+      <div class="month-tag">Fall</div>
+      <div class="month-name">September</div>
+      <div class="month-tasks">🌍 Aerate entire lawn (early Sept).<br>🌱 Overseed bare/thin spots immediately after.<br>💧 Water new seed lightly 2–3x daily.<br>🌿 IFA Step 4 (winterizer fertilizer).</div>
+    </div>
+    <div class="month-card fall">
+      <div class="month-tag">Fall</div>
+      <div class="month-name">October</div>
+      <div class="month-tasks">✂️ Final mow — cut down to 2.5 inches.<br>💧 Reduce watering frequency as temps drop.<br>🍂 Keep leaves raked off lawn.<br>🌿 Last fertilizer application if needed.</div>
+    </div>
+    <div class="month-card fall">
+      <div class="month-tag">Fall</div>
+      <div class="month-name">November</div>
+      <div class="month-tasks">❄️ Winterize sprinkler system (blow out).<br>💧 Final deep watering before freeze.<br>🛠️ Drain and store hoses.<br>📋 Schedule spring aeration rental.</div>
+    </div>
+    <div class="month-card winter">
+      <div class="month-tag">Winter</div>
+      <div class="month-name">December</div>
+      <div class="month-tasks">❄️ Lawn is dormant — no action needed.<br>🚫 Avoid heavy foot traffic on frozen grass.<br>🧂 Use sand instead of salt on walkways.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ WATERING -->
+<div id="tab-watering" class="section">
+  <div class="section-title">Watering</div>
+  <p class="section-intro">The #1 factor in lawn health. Utah clay soil and hard water require a specific approach.</p>
+
+  <div class="tip-strip">
+    <div class="tip-icon">💧</div>
+    <div class="tip-content">
+      <strong>Golden Rule: Water deep, not often</strong>
+      You want 1–1.5 inches per week, applied 2–3x. Deep, infrequent watering grows deep roots that survive Utah's summer heat. Shallow daily watering grows weak, surface-level roots that burn out fast.
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-pill"><div class="stat-value">4 AM</div><div class="stat-label">Best start time</div></div>
+    <div class="stat-pill"><div class="stat-value">1–1.5"</div><div class="stat-label">Inches per week</div></div>
+    <div class="stat-pill"><div class="stat-value">3×</div><div class="stat-label">Days per week</div></div>
+    <div class="stat-pill"><div class="stat-value">6"</div><div class="stat-label">Soil soak depth</div></div>
+  </div>
+
+  <h3>Your Zone Settings</h3>
+  <table class="water-table">
+    <thead>
+      <tr><th>Zone</th><th>Name</th><th>Run Time</th><th>Days</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="zone-badge">1</span></td><td>Back Middle/North</td><td><strong>30 min</strong></td><td>Mon / Wed / Fri</td></tr>
+      <tr><td><span class="zone-badge">2</span></td><td>Back South</td><td><strong>30 min</strong></td><td>Mon / Wed / Fri</td></tr>
+      <tr><td><span class="zone-badge">3</span></td><td>Front South</td><td><strong>25 min</strong></td><td>Mon / Wed / Fri</td></tr>
+      <tr><td><span class="zone-badge">4</span></td><td>Front North</td><td><strong>25 min</strong></td><td>Mon / Wed / Fri</td></tr>
+      <tr><td><span class="zone-badge">5</span></td><td>Back/Front North</td><td><strong>No change</strong></td><td>Mon / Wed / Fri</td></tr>
+      <tr><td><span class="zone-badge">6</span></td><td>Drip Lines</td><td><strong>45–60 min</strong></td><td>Mon / Wed / Fri</td></tr>
+      <tr><td><span class="zone-badge">7</span></td><td>Garden</td><td><strong>As needed</strong></td><td>Per plants</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Utah-Specific Watering Rules</h3>
+  <div class="card">
+    <div class="card-title">🌅 Always water at 4 AM</div>
+    <p>Evening watering keeps grass wet overnight → fungal disease. Midday watering evaporates before soaking in. 4 AM means the water soaks deep, and grass dries by morning.</p>
+  </div>
+  <div class="card amber">
+    <div class="card-title">🏔️ Utah clay soil absorbs slowly</div>
+    <p>If you see runoff before the zone finishes, use cycle & soak: run 15 min, pause 30 min, run 15 min again. Most controllers have this setting built in.</p>
+  </div>
+  <div class="card sky">
+    <div class="card-title">🌡️ Adjust seasonally</div>
+    <p>Spring (April–May): 20 min per zone. Summer peak (June–Aug): 30 min. Fall (Sept–Oct): reduce back to 20 min as temps drop. Shut off by November 1.</p>
+  </div>
+  <div class="card soil">
+    <div class="card-title">🔍 Walk your zones monthly</div>
+    <p>Run each zone manually and physically watch. Look for heads not rotating, arcing over bare spots, clogged heads, or tilted heads. Catch problems before they become dead spots.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ FERTILIZING -->
+<div id="tab-fertilizing" class="section">
+  <div class="section-title">Fertilizing</div>
+  <p class="section-intro">You're on the IFA 4-Step program — the right choice for Utah. Here's exactly how it works.</p>
+
+  <div class="steps-row">
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-label">Early Spring</div>
+      <div class="step-desc">Pre-emergent weed control + slow-release nitrogen. Apply March–April when soil hits 50°F.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-label">Late Spring</div>
+      <div class="step-desc">Broadleaf weed control + fertilizer. Apply May–early June. Targets dandelions and clover.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-label">Summer</div>
+      <div class="step-desc">Slow-release summer feed. Apply June–July. Keeps grass green through heat without burning.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-label">Fall</div>
+      <div class="step-desc">Winterizer — high potassium to build root reserves. Apply September–October. Critical step.</div>
+    </div>
+  </div>
+
+  <h3>Rules for Fertilizing in Utah</h3>
+  <div class="card">
+    <div class="card-title">💧 Water before AND after applying</div>
+    <p>Water your lawn the day before applying fertilizer. After applying, water it in within 24–48 hours. Utah's dry heat will burn grass if fertilizer sits on dry blades.</p>
+  </div>
+  <div class="card amber">
+    <div class="card-title">🌡️ Never fertilize in heat above 85°F</div>
+    <p>Applying fertilizer during a Utah heat wave causes fertilizer burn. Wait for a cooler stretch or apply early morning and water in immediately.</p>
+  </div>
+  <div class="card sky">
+    <div class="card-title">📏 Don't over-apply</div>
+    <p>More is not better. Follow IFA's label rates exactly. Over-fertilizing causes excessive top growth that stresses roots and increases disease risk.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">🌱 Starter fertilizer for overseeding</div>
+    <p>When overseeding in September, use a starter fertilizer (high phosphorus) instead of your regular Step 4. Phosphorus drives root development in new seedlings. Ask IFA which product to use alongside Step 4.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ MOWING -->
+<div id="tab-mowing" class="section">
+  <div class="section-title">Mowing</div>
+  <p class="section-intro">Mowing height is one of the most underrated factors in lawn health — especially in Utah summers.</p>
+
+  <div class="tip-strip">
+    <div class="tip-icon">✂️</div>
+    <div class="tip-content">
+      <strong>The One-Third Rule</strong>
+      Never cut more than one-third of the grass blade in a single mow. Cutting too much at once stresses the plant and exposes soil to heat and evaporation. If your lawn got long, lower the height gradually over 2–3 mows.
+    </div>
+  </div>
+
+  <div class="stat-row">
+    <div class="stat-pill"><div class="stat-value">3.5"</div><div class="stat-label">Spring height</div></div>
+    <div class="stat-pill"><div class="stat-value">4"</div><div class="stat-label">Summer height</div></div>
+    <div class="stat-pill"><div class="stat-value">2.5"</div><div class="stat-label">Final fall cut</div></div>
+    <div class="stat-pill"><div class="stat-value">⅓</div><div class="stat-label">Max cut per mow</div></div>
+  </div>
+
+  <h3>Seasonal Mowing Guide</h3>
+  <div class="card">
+    <div class="card-title">🌸 Spring (March–May) — 3 to 3.5 inches</div>
+    <p>Start at 3 inches when grass wakes up. Raise to 3.5 as growth accelerates. Mow every 5–7 days during active spring growth.</p>
+  </div>
+  <div class="card amber">
+    <div class="card-title">☀️ Summer (June–August) — 4 inches <span class="tag tag-red">Important</span></div>
+    <p>This is the most critical setting. Taller grass shades the soil, keeps roots cooler, retains moisture, and dramatically reduces drought stress. This single change can prevent many dead spots.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">🍂 Fall (September–October) — Lower gradually back to 2.5"</div>
+    <p>Gradually drop height as growth slows. Final mow of the season should be 2–2.5 inches — this prevents snow mold from forming under long grass over winter.</p>
+  </div>
+  <div class="card soil">
+    <div class="card-title">🔪 Keep blades sharp</div>
+    <p>Dull blades tear grass rather than cut it, leaving ragged edges that turn brown and invite disease. Sharpen or replace mower blades at least once per season — twice if you have a large yard.</p>
+  </div>
+  <div class="card sky">
+    <div class="card-title">🌿 Mulch your clippings</div>
+    <p>Leave clippings on the lawn unless they're too long and clumping. Short clippings decompose quickly and return nitrogen back to the soil — essentially a free light fertilizer application.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ AERATION -->
+<div id="tab-aeration" class="section">
+  <div class="section-title">Aeration & Overseeding</div>
+  <p class="section-intro">The single most impactful thing you can do for a Utah lawn. Clay soil compacts hard — aeration breaks the cycle.</p>
+
+  <div class="tip-strip">
+    <div class="tip-icon">🌍</div>
+    <div class="tip-content">
+      <strong>Why Utah lawns need aeration more than most</strong>
+      Utah's clay-heavy soils compact tightly, blocking water, air, and nutrients from reaching roots. Annual core aeration (pulling actual soil plugs) breaks compaction, improves drainage, and gives overseeded grass a perfect germination bed.
+    </div>
+  </div>
+
+  <h3>Core Aeration — The Only Kind That Works</h3>
+  <div class="card">
+    <div class="card-title">✅ Core aerator — pull 3–4 inch plugs</div>
+    <p>A machine with hollow tines that physically remove cylinders of soil. Leave the plugs on the surface — they break down in 2–3 weeks and feed the lawn. Rent from Home Depot or IFA for ~$80.</p>
+  </div>
+  <div class="card amber">
+    <div class="card-title">❌ Spike aerators and aeration shoes — avoid</div>
+    <p>These push soil down and compact it further rather than removing material. They look effective but actually make compaction worse. Only core aeration creates real relief channels in clay soil.</p>
+  </div>
+
+  <h3>Overseeding After Aeration</h3>
+  <div class="card sky">
+    <div class="card-title">🌱 Overseed immediately after aerating</div>
+    <p>The aeration holes are perfect seed-to-soil contact points. For your yard, use a Kentucky Bluegrass / Tall Fescue blend from IFA — ask for a Wasatch Front blend specifically. Apply with a broadcast spreader.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">📅 Best window: September 1–15</div>
+    <p>Soil is warm enough for germination but air temps are cooling — ideal for seed establishment. New seed needs to germinate before the first frost (usually mid-October in northern Utah).</p>
+  </div>
+  <div class="card soil">
+    <div class="card-title">💧 Watering new seed is different</div>
+    <p>For the first 2–3 weeks after overseeding: water lightly 2–3 times daily to keep the top inch of soil moist. Once seed germinates and reaches 1.5 inches tall, return to your normal deep-watering schedule.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ PROBLEMS -->
+<div id="tab-problems" class="section">
+  <div class="section-title">Problem Solver</div>
+  <p class="section-intro">Tap any symptom to diagnose and fix it. Common Utah lawn issues covered.</p>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      🟫 Large tan/straw patches — widespread <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Drought Stress</div>
+      <p><strong>Cause:</strong> Underwatering, poor sprinkler coverage, or watering at the wrong time of day. This is the most common Utah lawn problem and almost certainly what's affecting your backyard right now.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Switch watering to 4 AM. Increase run times to 30 minutes per zone. Walk each zone while running and adjust any heads arcing over dry spots (turn top screw clockwise to shorten throw). Check nozzle sizes match across each zone.</p>
+      <p style="margin-top:8px"><strong>Recovery:</strong> Grass crowns are usually still alive. With corrected watering, expect greening within 2 weeks. Bare dirt spots need overseeding in September.</p>
+    </div>
+  </div>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      🟡 Small circular dead spots with green ring <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Dog Urine</div>
+      <p><strong>Cause:</strong> Dog urine is high in nitrogen — kills a spot in the center but fertilizes the surrounding ring, creating a distinctive bulls-eye pattern.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Drench affected areas with water immediately after urination to dilute. Reseed dead centers in September. Some people train dogs to use a gravel area instead.</p>
+    </div>
+  </div>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      🌀 Circular rings that expand outward <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Necrotic Ring Spot / Fungal Disease</div>
+      <p><strong>Cause:</strong> Fungal disease — often triggered by evening watering that keeps grass wet overnight. Very common in Utah Kentucky Bluegrass lawns.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Switch to morning watering immediately. Apply a systemic fungicide (ask IFA for a product labeled for necrotic ring spot). Aerate to improve drainage. Avoid overfertilizing with nitrogen in summer.</p>
+    </div>
+  </div>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      🐛 Patches that peel back like carpet — spongy feel <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Grub Damage</div>
+      <p><strong>Cause:</strong> White grubs (larvae of beetles) eat grass roots just below the surface. Dead grass peels back easily because the roots are gone.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Apply a grub control product (imidacloprid or chlorantranilipro) in late May–June before eggs hatch. For active infestations in summer, use a fast-acting product. Ask IFA for current recommendations.</p>
+    </div>
+  </div>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      🌿 Vining weed that keeps coming back <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Bindweed</div>
+      <p><strong>Cause:</strong> Bindweed has roots up to 10 feet deep — pulling it makes it worse by spreading root fragments. Extremely persistent in Utah.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Apply Ortho Weed B Gon or Trimec (selective broadleaf herbicide) when actively growing and temps are below 85°F. Expect 2–3 applications several weeks apart. Never use Roundup in your lawn — it kills grass too. Stop applying at least 4 weeks before overseeding.</p>
+    </div>
+  </div>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      💛 Yellowing grass that doesn't green up with water <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Iron Deficiency / Alkaline Soil</div>
+      <p><strong>Cause:</strong> Utah water is hard and alkaline (high pH). High pH locks up iron in the soil so grass can't absorb it, causing yellowing even when watered and fertilized properly.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Apply chelated iron (Ironite or similar) — available at IFA. This is different from fertilizer. You can also apply sulfur to lower soil pH over time. IFA can do a soil test to confirm.</p>
+    </div>
+  </div>
+
+  <div class="problem-item">
+    <div class="problem-header" onclick="toggleProblem(this)">
+      💧 Water pools or runs off before soaking in <div class="chevron">▼</div>
+    </div>
+    <div class="problem-body">
+      <div class="symptom-tag">Soil Compaction / Thatch</div>
+      <p><strong>Cause:</strong> Compacted clay soil or thick thatch layer prevents water from penetrating. Water runs across the surface instead of soaking in.</p>
+      <p style="margin-top:8px"><strong>Fix:</strong> Core aerate in September — this is the primary solution for Utah clay. Also use cycle & soak on your controller: run each zone 15 min, pause 30 min, run 15 min again. Over time, annual aeration will dramatically improve infiltration.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════ CHECKLIST -->
+<div id="tab-checklist" class="section">
+  <div class="section-title">Master Checklist</div>
+  <p class="section-intro">Your complete action list. Tap items to check them off as you go.</p>
+
+  <h3>🔴 Do This Week</h3>
+  <ul class="checklist" id="checklist-now">
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Watering time changed to 4 AM ✅ Already done</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Change Zone 1 (Back Middle/North) from 15 → 30 minutes</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Change Zone 2 (Back South) from 15 → 30 minutes</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Keep Zone 5 (Back/Front North) at current run time — already green</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Run Zone 1 manually and walk coverage — turn top screw clockwise on heads arcing over bare spots</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Run Zone 2 manually and walk coverage — same adjustments</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Check for clogged, tilted, or stuck heads in all zones</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Pull one nozzle per zone — confirm all heads on same zone say "8" (or matching number)</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Apply Ortho Weed B Gon or Trimec to bindweed (below 85°F, early morning)</span></li>
+  </ul>
+
+  <h3>🟡 Weeks 2–4 (Late June)</h3>
+  <ul class="checklist">
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Buy Hunter Size 8 replacement nozzles from IFA (pack of 10)</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Replace any mismatched nozzles found in audit — full zone at a time only</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Reapply bindweed herbicide if still present (2–3 applications needed)</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Monitor stressed areas — expect green returning within 2 weeks of watering fix</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">If still dry after 4 weeks, bump Zones 1 & 2 to 35 minutes</span></li>
+  </ul>
+
+  <h3>🟠 July – August</h3>
+  <ul class="checklist">
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Raise mower to 4 inches for summer — shade roots during peak heat</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Final bindweed treatment — stop at least 4 weeks before September overseeding</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Reserve core aerator rental for early September (Home Depot or IFA, ~$80)</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Purchase Kentucky Bluegrass / Tall Fescue seed blend from IFA</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Purchase IFA Step 3 (summer fertilizer) if not yet applied</span></li>
+  </ul>
+
+  <h3>🌱 Early September</h3>
+  <ul class="checklist">
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Core aerate entire backyard (Sept 1–10)</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Overseed all dead/bare spots immediately after aerating</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Apply IFA starter fertilizer to overseeded areas</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Apply IFA Step 4 (winterizer) to entire lawn</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Water new seed lightly 2–3x daily until germinated</span></li>
+  </ul>
+
+  <h3>🍂 October – November</h3>
+  <ul class="checklist">
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Final mow — cut down to 2.5 inches</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Reduce watering frequency as temps drop below 60°F</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Winterize sprinkler system — blow out with compressed air before first hard freeze</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Keep leaves raked off lawn to prevent smothering</span></li>
+  </ul>
+
+  <h3>🔁 Every Year</h3>
+  <ul class="checklist">
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Complete all 4 IFA fertilizer steps on schedule</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Core aerate every fall</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Overseed thin spots every September</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Walk all sprinkler zones monthly during season</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">Sharpen mower blades each spring</span></li>
+    <li><div class="check-box" onclick="toggleCheck(this)"></div><span class="check-text">When replacing heads, upgrade to Hunter MP Rotators — one full zone at a time</span></li>
+  </ul>
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function toggleProblem(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  document.querySelectorAll('.problem-body').forEach(b => b.classList.remove('open'));
+  document.querySelectorAll('.problem-header').forEach(h => h.classList.remove('open'));
+  if (!isOpen) {
+    body.classList.add('open');
+    header.classList.add('open');
+  }
+}
+
+function toggleCheck(box) {
+  const isChecked = box.classList.contains('checked');
+  const text = box.nextElementSibling;
+  if (isChecked) {
+    box.classList.remove('checked');
+    box.textContent = '';
+    text.classList.remove('checked-text');
+  } else {
+    box.classList.add('checked');
+    box.textContent = '✓';
+    text.classList.add('checked-text');
+  }
+}
+</script>
+</body>
+</html>
